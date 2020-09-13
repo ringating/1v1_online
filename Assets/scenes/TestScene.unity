@@ -410,8 +410,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 220096059}
-  remoteAddress: 192.168.0.21
-  remotePort: 6921
+  ipAddressString: 192.168.0.11
+  port: 500
 --- !u!1 &534669902
 GameObject:
   m_ObjectHideFlags: 0
@@ -528,7 +528,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 551577158}
-  connection: {fileID: 220096064}
+  sendingScript: {fileID: 220096064}
 --- !u!54 &551577158
 Rigidbody:
   m_ObjectHideFlags: 0

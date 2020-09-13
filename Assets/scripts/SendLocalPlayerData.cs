@@ -9,11 +9,14 @@ public class SendLocalPlayerData : MonoBehaviour
 {
     public Rigidbody rb;
 
-    public string remoteAddress = "0.0.0.0";
-    public int remotePort = 6969;
+    public string hostIP;
+    public int hostPort;
 
-    private Socket socket;
+    private UdpClient client;
     private Sendables data;
+    private byte[] toSend;
+
+    public const int SIO_UDP_CONNRESET = -1744830452;
 
     public class Sendables 
     {
@@ -78,40 +81,37 @@ public class SendLocalPlayerData : MonoBehaviour
 
     void Start()
     {
-        if (socket == null) CreateSocketInstance();
-        socket.Connect(remoteAddress, remotePort);
+        if (client == null) CreateSocketInstance();
+        //client.Connect(IPAddress.Parse(ipAddressString), port);
         data = new Sendables(rb.position);
-        if (socket == null) print("socket is null");
+        if (client == null) print("socket is null");
     }
 
     void FixedUpdate()
     {
         data.SetData(rb.position);
-        int sentBytes = socket.Send(data.ToByteArray());
-        print(sentBytes + " bytes sent");
+        toSend = data.ToByteArray();
+        int sentBytes = client.Send(toSend, toSend.Length);
+        //print(sentBytes + " bytes sent");
     }
 
     private void CreateSocketInstance()
     {
         try
         {
-			socket = new Socket(SocketType.Dgram, ProtocolType.IP)
-			{
-				Blocking = false
-			};
-            socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
-            //socket.SetIPProtectionLevel(IPProtectionLevel.Unrestricted);
-		}
-        catch (SocketException e)
+            client = new UdpClient();
+            client.Connect(IPAddress.Parse(hostIP), hostPort);
+            //client.Client.IOControl((IOControlCode)SIO_UDP_CONNRESET, new byte[] { 0, 0, 0, 0 }, null); //https://stackoverflow.com/a/39440399
+        }
+        catch (Exception e)
         {
             print(e);
         }
-        
     }
 
-	public Socket getSocket()
+	public UdpClient getUdpClient()
 	{
-		if (socket == null) CreateSocketInstance();
-		return socket;
+		if (client == null) CreateSocketInstance();
+		return client;
 	}
 }

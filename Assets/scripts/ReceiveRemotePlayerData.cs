@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
 
@@ -7,33 +8,42 @@ public class ReceiveRemotePlayerData : MonoBehaviour
 {
     public Rigidbody rb;
 
-    public SendLocalPlayerData connection;
+    public SendLocalPlayerData sendingScript;
 
-    private Socket socket;
-    private byte[] receiveBuffer;
+    private UdpClient client;
+    private byte[] receiveBytes;
+    private IPEndPoint remoteIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
     private SendLocalPlayerData.Sendables receiveObject;
 
     void Start()
     {
-        socket = connection.getSocket();
-        receiveBuffer = new byte[SendLocalPlayerData.Sendables.bytesLength];
+        client = new UdpClient();
+        client.Connect(IPAddress.Parse(sendingScript.ipAddressString), sendingScript.port);
+        client.Client.Blocking = false;
+        //receiveBytes = new byte[SendLocalPlayerData.Sendables.bytesLength];
         receiveObject = new SendLocalPlayerData.Sendables(new Vector3());
     }
 
     void FixedUpdate()
     {
-        if (socket.Available > 0)
+        //print("client.Available = " + client.Available);
+        if (false)
         {
             try
             {
-                socket.Receive(receiveBuffer);
-            } 
+                receiveBytes = client.Receive(ref remoteIpEndPoint);
+            }
             catch (SocketException e)
             {
                 print(e);
             }
-            receiveObject.SetData(receiveBuffer);
+            receiveObject.SetData(receiveBytes);
             rb.MovePosition(receiveObject.GetPosition());
+        }
+        else
+        {
+            try { receiveBytes = client.Receive(ref remoteIpEndPoint); } catch (SocketException e) { }
+            if (receiveBytes != null) { print(receiveBytes); } 
         }
     }
 }
