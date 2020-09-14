@@ -692,3 +692,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08b1da9731c53e44a9b2e73f6ecd459f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  receiveScript: {fileID: 551577157}
+  sendScript: {fileID: 220096064}

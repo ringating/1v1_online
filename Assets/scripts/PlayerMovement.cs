@@ -15,7 +15,8 @@ public class PlayerMovement : MonoBehaviour
         vel.Set(
             Input.GetAxisRaw("Horizontal") * speed,
             rb.velocity.y,
-            Input.GetAxisRaw("Vertical") * speed);
+            Input.GetAxisRaw("Vertical") * speed
+        );
         rb.velocity = vel;
     }
 }

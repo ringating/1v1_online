@@ -11,29 +11,36 @@ public class ReceiveRemotePlayerData : MonoBehaviour
 
     private Socket socket;
     private byte[] receiveBuffer;
-    private SendLocalPlayerData.Sendables receiveObject;
+    private Sendables receiveObject;
 
     void Start()
     {
-        socket = connection.getSocket();
-        receiveBuffer = new byte[SendLocalPlayerData.Sendables.bytesLength];
-        receiveObject = new SendLocalPlayerData.Sendables(new Vector3());
+        receiveBuffer = new byte[Sendables.bytesLength];
+        receiveObject = new Sendables(new Vector3());
     }
 
     void FixedUpdate()
     {
-        if (socket.Available > 0)
+        if (socket != null)
         {
-            try
+            if (socket.Available > 0)
             {
-                socket.Receive(receiveBuffer);
-            } 
-            catch (SocketException e)
-            {
-                print(e);
+                try
+                {
+                    socket.Receive(receiveBuffer);
+                }
+                catch (SocketException e)
+                {
+                    print(e);
+                }
+                receiveObject.SetData(receiveBuffer);
+                rb.MovePosition(receiveObject.GetPosition());
             }
-            receiveObject.SetData(receiveBuffer);
-            rb.MovePosition(receiveObject.GetPosition());
         }
+    }
+
+    public void UseThisSocket(Socket sock)
+    {
+        socket = sock;
     }
 }
