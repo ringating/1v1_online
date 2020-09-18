@@ -13,6 +13,9 @@ public class ReceiveRemotePlayerData : MonoBehaviour
     private byte[] receiveBuffer;
     private Sendables receiveObject;
 
+    private Vector3 newestPos;
+    private float smoothness = .5f;
+
     void Start()
     {
         receiveBuffer = new byte[Sendables.bytesLength];
@@ -34,8 +37,9 @@ public class ReceiveRemotePlayerData : MonoBehaviour
                     print(e);
                 }
                 receiveObject.SetData(receiveBuffer);
-                rb.MovePosition(receiveObject.GetPosition());
+                newestPos = receiveObject.GetPosition();
             }
+            rb.MovePosition(rb.position * smoothness + newestPos * (1 - smoothness));
         }
     }
 
