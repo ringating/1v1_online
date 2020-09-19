@@ -6,6 +6,7 @@ using UnityEngine;
 public class ReceiveRemotePlayerData : MonoBehaviour
 {
     public Rigidbody rb;
+    public JumpVisuals remotePlayerJumpVisuals;
 
     public SendLocalPlayerData connection;
 
@@ -14,12 +15,12 @@ public class ReceiveRemotePlayerData : MonoBehaviour
     private Sendables receiveObject;
 
     private Vector3 newestPos;
-    private float smoothness = .5f;
+    public float smoothness = .5f;
 
     void Start()
     {
         receiveBuffer = new byte[Sendables.bytesLength];
-        receiveObject = new Sendables(new Vector3());
+        receiveObject = new Sendables(new Vector3(), true);
     }
 
     void FixedUpdate()
@@ -40,6 +41,7 @@ public class ReceiveRemotePlayerData : MonoBehaviour
                 newestPos = receiveObject.GetPosition();
             }
             rb.MovePosition(rb.position * smoothness + newestPos * (1 - smoothness));
+            remotePlayerJumpVisuals.grounded = receiveObject.GetGrounded();
         }
     }
 

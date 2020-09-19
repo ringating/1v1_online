@@ -8,6 +8,7 @@ using System;
 public class SendLocalPlayerData : MonoBehaviour
 {
     public Rigidbody rb;
+    public GroundedCheck groundedScript;
 
     public string remoteAddress = "0.0.0.0";
     public int remotePort = 6969;
@@ -17,12 +18,12 @@ public class SendLocalPlayerData : MonoBehaviour
 
     void Start()
     {
-        data = new Sendables(rb.position);
+        data = new Sendables(rb.position, groundedScript.grounded);
     }
 
     void FixedUpdate()
     {
-        data.SetData(rb.position);
+        data.SetData(rb.position, groundedScript.grounded);
         if (socket != null)
         {
             socket.Send(data.ToByteArray());
